@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="hero-acs">
+    <div class="container">
+        <h1 class="display-5">ACS Social Awareness Platform</h1>
+        <p class="lead">
+            Start a social campaign, promote your business, and connect with your community.
+        </p>
+        <div class="mt-4 d-flex flex-wrap gap-2 justify-content-center">
+            <a asp-controller="Account" asp-action="Register" class="btn btn-acs-teal px-4">
+                <i class="bi bi-plus-circle me-2"></i>Start a Campaign
+            </a>
+            <a asp-controller="Campaigns" asp-action="Index" class="btn btn-outline-acs-teal px-4">
+                <i class="bi bi-megaphone me-2"></i>Browse Campaigns
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card">
+                <div class="card-body">
+                    <div class="feature-icon teal">
+                        <i class="bi bi-megaphone"></i>
+                    </div>
+                    <h5 class="card-title">Social Campaigns Grid</h5>
+                    <p class="card-text">
+                        Explore active social awareness campaigns and support the ones that matter to you.
+                    </p>
+                    <a asp-controller="Campaigns" asp-action="Index" class="btn btn-acs-teal btn-sm">
+                        View Campaigns <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card">
+                <div class="card-body">
+                    <div class="feature-icon orange">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <h5 class="card-title">Small Business Directory</h5>
+                    <p class="card-text">
+                        Discover local businesses and their ads promoting community-focused services.
+                    </p>
+                    <a asp-controller="Businesses" asp-action="Index" class="btn btn-acs-orange btn-sm">
+                        View Directory <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card">
+                <div class="card-body">
+                    <div class="feature-icon teal">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                    </div>
+                    <h5 class="card-title">Member Dashboard</h5>
+                    <p class="card-text">
+                        Manage your campaigns, business ads, and profile in one place.
+                    </p>
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-acs-teal btn-sm">
+                        Go to Dashboard <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

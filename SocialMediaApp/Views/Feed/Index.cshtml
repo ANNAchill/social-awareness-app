@@ -1,0 +1,73 @@
+@model IEnumerable<SocialMediaApp.Models.Post>
+
+@{
+    ViewData["Title"] = "Community Feed";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-acs feed-card mb-4">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar-placeholder">?</div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <form asp-action="Create" method="post">
+                                <input name="authorName" class="form-control form-control-sm mb-2" placeholder="Your name (optional)" />
+                                <textarea name="content" class="form-control border-0 px-0 bg-transparent" rows="2" placeholder="Share something with the world..."></textarea>
+                                <div class="d-flex justify-content-end mt-2">
+                                    <button type="submit" class="btn btn-acs-teal btn-sm px-3 rounded-pill">
+                                        <i class="bi bi-send me-1"></i>Post
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="card card-acs">
+                    <div class="card-body text-center py-5">
+                        <div class="feature-icon teal mx-auto mb-3"><i class="bi bi-chat-dots"></i></div>
+                        <h5 class="fw-bold">No posts yet</h5>
+                        <p class="text-muted mb-0">Be the first to share something!</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @foreach (var post in Model)
+                {
+                    <div class="card card-acs feed-card mb-4">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="avatar-placeholder">@(post.AuthorName.Length > 0 ? post.AuthorName[0] : '?')</div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="fw-semibold me-2">@post.AuthorName</span>
+                                        <span class="text-muted small">@post.CreatedAt.ToLocalTime().ToString("g")</span>
+                                    </div>
+                                    <p class="mb-2">@post.Content</p>
+                                    <div class="d-flex align-items-center gap-3 text-muted small">
+                                        <form asp-action="Like" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@post.Id" />
+                                            <button type="submit" class="btn btn-link p-0 text-decoration-none text-muted">
+                                                <i class="bi bi-heart me-1"></i>Like (@post.Likes)
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

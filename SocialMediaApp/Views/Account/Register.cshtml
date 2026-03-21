@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="auth-wrap">
+    <div class="card auth-card">
+        <div class="card-body">
+            <h4 class="mb-2 text-center fw-bold">Create Account</h4>
+            <p class="text-muted small text-center mb-4">
+                Join the ACS Social Awareness Platform to create campaigns and promote your business.
+            </p>
+
+            @if (ViewData["Error"] is string error && !string.IsNullOrWhiteSpace(error))
+            {
+                <div class="alert alert-danger py-2 small mb-3">@error</div>
+            }
+
+            <form asp-action="Register" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Full name</label>
+                    <input name="fullName" class="form-control" placeholder="Alex Rivera" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email address</label>
+                    <input name="email" type="email" class="form-control" placeholder="you@example.com" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input name="password" type="password" class="form-control" placeholder="Create a password" required />
+                </div>
+
+                <button type="submit" class="btn btn-acs-orange w-100 mb-3 py-2">Sign Up</button>
+
+                <div class="text-center small text-muted">
+                    Already have an account? <a asp-action="Login">Log in</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
