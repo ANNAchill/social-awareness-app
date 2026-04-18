@@ -29,39 +29,43 @@ public class CampaignsController : Controller
         return View();
     }
 
-    [HttpPost]
-    public IActionResult Create(Campaign model)
+[HttpPost]
+public IActionResult Create(Campaign model)
+{
+    var userId = HttpContext.Session.GetInt32("UserId");
+    if (userId is null)
     {
-        var userId = HttpContext.Session.GetInt32("UserId");
-        if (userId is null)
-        {
-            return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Create", "Campaigns") });
-        }
-
-        if (string.IsNullOrWhiteSpace(model?.Title))
-        {
-            ModelState.AddModelError(nameof(Campaign.Title), "Campaign title is required.");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return View(model ?? new Campaign());
-        }
-
-        if (model is null)
-        {
-            return RedirectToAction(nameof(Index), "Dashboard");
-        }
-
-        model.OwnerUserId = userId.Value;
-        model.Status = "Pending";
-        model.Title = model.Title.Trim();
-        model.Description = model.Description?.Trim() ?? "";
-        model.ImpactGoal = model.ImpactGoal?.Trim() ?? "";
-        _db.Campaigns.Add(model);
-        _db.SaveChanges();
-
-        return RedirectToAction("Index", "Dashboard");
+        return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Create", "Campaigns") });
     }
-}
 
+    if (string.IsNullOrWhiteSpace(model?.Title))
+    {
+        ModelState.AddModelError(nameof(Campaign.Title), "Campaign title is required.");
+    }
+
+    if (model is null)
+    {
+        return View(new Campaign());
+    }
+
+    model.OwnerId = userId.Value;
+    model.OwnerUserId = userId.Value;
+    model.Status = "Pending";
+    model.Title = model.Title?.Trim() ?? "";
+    model.Description = model.Description?.Trim() ?? "";
+    model.ImpactGoal = model.ImpactGoal?.Trim() ?? "";
+
+    ModelState.Remove(nameof(Campaign.Owner));
+    ModelState.Remove(nameof(Campaign.Images));
+
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    _db.Campaigns.Add(model);
+    _db.SaveChanges();
+
+    return RedirectToAction("Index", "Dashboard");
+}
+}

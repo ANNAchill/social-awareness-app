@@ -15,6 +15,7 @@ public class User
 
     public ICollection<Campaign> Campaigns { get; set; } = [];
 
+    public ICollection<Business> Businesses { get; set; } = [];
+
     public ICollection<UserActivity> Activities { get; set; } = [];
 }
-

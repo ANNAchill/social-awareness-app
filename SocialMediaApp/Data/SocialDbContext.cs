@@ -36,6 +36,18 @@ public class SocialDbContext : DbContext
             .WithMany(r => r.UserRoles)
             .HasForeignKey(ur => ur.RoleId);
 
+        modelBuilder.Entity<Campaign>()
+            .HasOne(c => c.Owner)
+            .WithMany(u => u.Campaigns)
+            .HasForeignKey(c => c.OwnerId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Business>()
+            .HasOne(b => b.Owner)
+            .WithMany(u => u.Businesses)
+            .HasForeignKey(b => b.OwnerId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<CampaignImage>()
             .HasOne(ci => ci.Campaign)
             .WithMany(c => c.Images)
@@ -43,4 +55,3 @@ public class SocialDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
-

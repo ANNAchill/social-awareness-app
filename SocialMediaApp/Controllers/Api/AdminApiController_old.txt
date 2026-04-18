@@ -16,16 +16,6 @@ public class AdminApiController : ControllerBase
 
     private int? UserId => HttpContext.Session.GetInt32("UserId");
 
-    private IActionResult AdminForbidden()
-    {
-        return StatusCode(StatusCodes.Status403Forbidden, new { error = "Admin access required." });
-    }
-
-    private IActionResult NotLoggedIn()
-    {
-        return Unauthorized(new { error = "Please log in." });
-    }
-
     private async Task<bool> IsAdminAsync(CancellationToken ct)
     {
         if (UserId is null) return false;
@@ -40,7 +30,7 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> GetPendingCampaigns(CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
         var list = await _db.Campaigns
             .Include(c => c.Owner)
@@ -53,8 +43,8 @@ public class AdminApiController : ControllerBase
                 c.Description,
                 c.ImpactGoal,
                 c.Status,
-                OwnerName = c.Owner != null ? c.Owner.FullName : "",
-                OwnerEmail = c.Owner != null ? c.Owner.Email : "",
+                OwnerName = c.Owner.FullName,
+                OwnerEmail = c.Owner.Email,
                 OwnerId = c.OwnerId
             })
             .ToListAsync(ct);
@@ -66,7 +56,7 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> GetPendingDemotionRequests(CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
         var list = await _db.AdminDemotionRequests
             .Include(r => r.TargetUser)
@@ -94,9 +84,9 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> CreateDemotionRequest(int targetUserId, CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
-        if (UserId is null) return NotLoggedIn();
+        if (UserId is null) return Forbid();
 
         if (UserId.Value == targetUserId)
             return BadRequest(new { error = "You cannot request removal of your own admin rights." });
@@ -140,9 +130,9 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> ApproveDemotionRequest(int id, CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
-        if (UserId is null) return NotLoggedIn();
+        if (UserId is null) return Forbid();
 
         var req = await _db.AdminDemotionRequests
             .Include(r => r.TargetUser)
@@ -196,7 +186,7 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> ApproveCampaign(int id, CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
         var campaign = await _db.Campaigns.FindAsync(new object[] { id }, ct);
         if (campaign is null) return NotFound(new { error = "Campaign not found." });
@@ -211,7 +201,7 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> RejectCampaign(int id, CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
         var campaign = await _db.Campaigns.FindAsync(new object[] { id }, ct);
         if (campaign is null) return NotFound(new { error = "Campaign not found." });
@@ -226,7 +216,7 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> GetUsers(CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
         var list = await _db.Users
             .Include(u => u.UserRoles)
@@ -248,7 +238,7 @@ public class AdminApiController : ControllerBase
     public async Task<IActionResult> AssignRole(int userId, [FromBody] AssignRoleRequest req, CancellationToken ct)
     {
         if (!await IsAdminAsync(ct))
-            return AdminForbidden();
+            return Forbid();
 
         if (string.IsNullOrWhiteSpace(req?.RoleName))
             return BadRequest(new { error = "Role name is required." });

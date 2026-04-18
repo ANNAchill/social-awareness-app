@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace SocialMediaApp.Models;
 
 public class Campaign
@@ -18,8 +19,10 @@ public class Campaign
     public int OwnerId { get; set; }
 
     public int OwnerUserId { get; set; }
-    public User Owner { get; set; } = null!;
+    [ValidateNever]
+    public User? Owner { get; set; }
 
+    [ValidateNever]
     public ICollection<CampaignImage> Images { get; set; } = [];
 }
 

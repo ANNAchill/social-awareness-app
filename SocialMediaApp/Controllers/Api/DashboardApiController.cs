@@ -24,7 +24,7 @@ public class DashboardApiController : ControllerBase
         if (user is null) return Unauthorized();
 
         var myBusinesses = await _db.Businesses
-            .Where(b => b.OwnerUserId == user.Id)
+            .Where(b => b.OwnerId == user.Id || b.OwnerUserId == user.Id)
             .Select(b => new { b.Id, b.Name, b.Industry, b.Website, b.City })
             .ToListAsync(ct);
 

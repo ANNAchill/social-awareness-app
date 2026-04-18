@@ -42,34 +42,48 @@ public class AccountController : Controller
         return View();
     }
 
-    [HttpPost]
-    public IActionResult Register(string fullName, string email, string password)
+ [HttpPost]
+public IActionResult Register(string fullName, string email, string password)
+{
+    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
     {
-        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-        {
-            ViewData["Error"] = "All fields are required.";
-            return View();
-        }
-
-        if (_db.Users.Any(u => u.Email == email))
-        {
-            ViewData["Error"] = "An account with this email already exists.";
-            return View();
-        }
-
-        var user = new User
-        {
-            FullName = fullName.Trim(),
-            Email = email.Trim(),
-            PasswordHash = HashPassword(password)
-        };
-
-        _db.Users.Add(user);
-        _db.SaveChanges();
-
-        HttpContext.Session.SetInt32("UserId", user.Id);
-        return RedirectToAction("Index", "Dashboard");
+        ViewData["Error"] = "All fields are required.";
+        return View();
     }
+
+    if (_db.Users.Any(u => u.Email == email))
+    {
+        ViewData["Error"] = "An account with this email already exists.";
+        return View();
+    }
+
+    var memberRole = _db.Roles.FirstOrDefault(r => r.Name == RoleSeeder.RoleMember);
+    if (memberRole is null)
+    {
+        ViewData["Error"] = "Member role not found. Please restart the app.";
+        return View();
+    }
+
+    var user = new User
+    {
+        FullName = fullName.Trim(),
+        Email = email.Trim(),
+        PasswordHash = HashPassword(password)
+    };
+
+    _db.Users.Add(user);
+    _db.SaveChanges();
+
+    _db.UserRoles.Add(new UserRole
+    {
+        UserId = user.Id,
+        RoleId = memberRole.Id
+    });
+    _db.SaveChanges();
+
+    HttpContext.Session.SetInt32("UserId", user.Id);
+    return RedirectToAction("Index", "Dashboard");
+}
 
     public IActionResult Logout()
     {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace SocialMediaApp.Models;
 
 public class Business
@@ -12,7 +13,12 @@ public class Business
 
     public string? City { get; set; }
 
-    public int OwnerUserId { get; set; }
-    public User Owner { get; set; } = null!;
-}
+    // Primary FK used by EF to link to Owner.
+    public int OwnerId { get; set; }
 
+    // Kept temporarily for compatibility with the existing schema / UI payloads.
+    public int OwnerUserId { get; set; }
+
+    [ValidateNever]
+    public User? Owner { get; set; }
+}

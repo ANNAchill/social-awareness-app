@@ -49,10 +49,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Ensure roles exist on startup
+// Ensure the database schema and seed data are applied on startup.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<SocialDbContext>();
+    db.Database.Migrate();
     RoleSeeder.SeedRolesAsync(db).GetAwaiter().GetResult();
 }
 

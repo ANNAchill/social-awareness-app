@@ -21,9 +21,9 @@ public class CampaignsApiController : ControllerBase
             .Select(c => new CampaignDto(
                 c.Id,
                 c.Title,
-                c.Description ?? "",
-                c.ImpactGoal ?? "",
-                c.Status ?? "Pending",
+                c.Description,
+                c.ImpactGoal,
+                c.Status,
                 c.Images.OrderBy(i => i.SortOrder).ThenBy(i => i.Id).Select(i => i.FilePath).ToList()
             ))
             .ToListAsync(ct);
@@ -51,8 +51,8 @@ public class CampaignsApiController : ControllerBase
         var campaign = new Campaign
         {
             Title = title.Trim(),
-            Description = description?.Trim() ?? "",
-            ImpactGoal = impactGoal?.Trim() ?? "",
+            Description = description?.Trim() ?? string.Empty,
+            ImpactGoal = impactGoal?.Trim() ?? string.Empty,
             Status = "Pending",
             OwnerId = userId.Value,
             OwnerUserId = userId.Value
@@ -97,7 +97,6 @@ public class CampaignsApiController : ControllerBase
 
             await _db.SaveChangesAsync(ct);
 
-            // Optional: set cover image to first uploaded
             if (createdImages.Count > 0 && string.IsNullOrWhiteSpace(campaign.CoverImagePath))
             {
                 campaign.CoverImagePath = createdImages[0];

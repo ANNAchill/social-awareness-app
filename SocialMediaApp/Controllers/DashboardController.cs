@@ -32,7 +32,7 @@ public class DashboardController : Controller
         }
 
         var myBusinesses = _db.Businesses
-            .Where(b => b.OwnerUserId == user.Id)
+            .Where(b => b.OwnerId == user.Id || b.OwnerUserId == user.Id)
             .ToList();
 
         var vm = new DashboardViewModel
@@ -52,4 +52,3 @@ public class DashboardViewModel
     public List<Models.Campaign> MyCampaigns { get; set; } = [];
     public List<Models.Business> MyBusinesses { get; set; } = [];
 }
-

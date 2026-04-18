@@ -18,7 +18,13 @@ public class BusinessesApiController : ControllerBase
     {
         var list = await _db.Businesses
             .OrderByDescending(b => b.Id)
-            .Select(b => new BusinessDto(b.Id, b.Name, b.Industry ?? "", b.Website, b.City, b.OwnerUserId))
+            .Select(b => new BusinessDto(
+                b.Id,
+                b.Name,
+                b.Industry,
+                b.Website,
+                b.City,
+                b.OwnerId != 0 ? b.OwnerId : b.OwnerUserId))
             .ToListAsync(ct);
         return Ok(list);
     }
@@ -35,15 +41,16 @@ public class BusinessesApiController : ControllerBase
         var business = new Business
         {
             Name = req.Name.Trim(),
-            Industry = req.Industry?.Trim() ?? "",
-            Website = req.Website?.Trim(),
-            City = req.City?.Trim(),
+            Industry = req.Industry?.Trim() ?? string.Empty,
+            Website = string.IsNullOrWhiteSpace(req.Website) ? null : req.Website.Trim(),
+            City = string.IsNullOrWhiteSpace(req.City) ? null : req.City.Trim(),
+            OwnerId = userId.Value,
             OwnerUserId = userId.Value
         };
         _db.Businesses.Add(business);
         await _db.SaveChangesAsync(ct);
 
-        return Ok(new BusinessDto(business.Id, business.Name, business.Industry, business.Website, business.City, business.OwnerUserId));
+        return Ok(new BusinessDto(business.Id, business.Name, business.Industry, business.Website, business.City, business.OwnerId));
     }
 }
 
